@@ -51,12 +51,7 @@ namespace ChargeBee.Api
 
             if (String.IsNullOrEmpty(apiKey))
                 throw new ArgumentException("Api key can't be empty!");
-            
-            //
-            // (MM) Updated client factory for use in API requests...NOPE.
-            // Gotta be the client itself at this stage.
-            HttpClient = httpClient;
-            
+
             //
             // Suitable httpClient for repeated usage here or in the utilities class??
             // If here, then convert to private or protected then call .CreateClient()
@@ -67,6 +62,14 @@ namespace ChargeBee.Api
             ExportSleepMillis = 10000;
             SiteName = siteName;
             ApiKey = apiKey;
+            
+            //
+            // (MM) Updated client factory for use in API requests...NOPE.
+            // Gotta be the client itself at this stage.
+            HttpClient = httpClient;
+
+            if(HttpClient.BaseAddress == null)
+                httpClient.BaseAddress = new Uri(ApiBaseUrl + "/");
         }
 
         private static volatile ApiConfig m_instance;
