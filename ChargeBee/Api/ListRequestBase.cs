@@ -42,9 +42,9 @@ namespace ChargeBee.Api
 			return new DateFilter<U>(paramName, (U)this).SupportsPresenceOperator(true);
 		}
 
-		public new ListResult Request(ApiConfig env)
+		public new async Task<ListResult> Request(ApiConfig env)
 		{
-			return ApiUtil.GetList(m_url, m_params, headers, env);
+			return await ApiUtil.GetList(m_url, m_params, headers, env);
 		}
 
         public new Task<ListResult> RequestAsync(ApiConfig env)
@@ -52,9 +52,9 @@ namespace ChargeBee.Api
             return ApiUtil.GetListAsync(m_url, m_params, headers, env);
         }
 
-        public new ListResult Request()
+        public new async Task<ListResult> Request()
 		{
-			return Request(ApiConfig.Instance);
+			return await Request(ApiConfig.Instance);
 		}
 
         public new Task<ListResult> RequestAsync()

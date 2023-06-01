@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using System.Text;
 using ChargeBee.Internal;
 using Newtonsoft.Json.Linq;
@@ -7,7 +8,9 @@ namespace ChargeBee.Api
 {
     public sealed class ApiConfig
     {
-		public static string DomainSuffix = "chargebee.com";
+        public readonly HttpClient HttpClient;
+        
+        public static string DomainSuffix = "chargebee.com";
 		public static string Proto = "https";
 		public static string Version = "3.5.0";
 		public static readonly string API_VERSION = "v2";
@@ -41,14 +44,22 @@ namespace ChargeBee.Api
             }
         }
 
-        public ApiConfig(string siteName, string apiKey)
+        public ApiConfig(string siteName, string apiKey, HttpClient httpClient)
         {
-
             if (String.IsNullOrEmpty(siteName))
                 throw new ArgumentException("Site name can't be empty!");
 
             if (String.IsNullOrEmpty(apiKey))
                 throw new ArgumentException("Api key can't be empty!");
+            
+            //
+            // (MM) Updated client factory for use in API requests...NOPE.
+            // Gotta be the client itself at this stage.
+            HttpClient = httpClient;
+            
+            //
+            // Suitable httpClient for repeated usage here or in the utilities class??
+            // If here, then convert to private or protected then call .CreateClient()
 
             Charset = Encoding.UTF8.WebName;
             ConnectTimeout = 30000;
@@ -60,9 +71,9 @@ namespace ChargeBee.Api
 
         private static volatile ApiConfig m_instance;
 
-        public static void Configure(string siteName, string apiKey)
+        public static void Configure(string siteName, string apiKey, HttpClient httpClient)
         {         
-            m_instance = new ApiConfig(siteName, apiKey);
+            m_instance = new ApiConfig(siteName, apiKey, httpClient);
         }
 
         public static string SerializeObject<T>(T t)where T : Resource
